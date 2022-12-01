@@ -4,7 +4,6 @@ import com.example.data.model.Users
 import com.example.data.model.requests.AuthRequest
 import com.example.data.model.responses.AuthMessageResponse
 import com.example.data.model.responses.AuthResponse
-import com.example.data.model.responses.UserInfoResponse
 import com.example.data.source.UserDataSource
 import com.example.service.JwtTokenService
 import com.example.service.security.hashing.HashingService
@@ -14,8 +13,6 @@ import com.example.service.security.token.TokenConfig
 import com.example.util.Const
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -28,7 +25,6 @@ fun Route.authRoutes(
 ) {
     login(userDataSource, hashingService, tokenService, tokenConfig)
     register(userDataSource, hashingService, tokenService, tokenConfig)
-    getUserInfo()
 }
 
 private fun Route.login(
@@ -158,25 +154,3 @@ private fun generateToken(
         value = user.id.toString()
     )
 )
-
-private fun Route.getUserInfo() {
-    authenticate {
-        get(Const.USER_INFO) {
-            val principal = call.principal<JWTPrincipal>()
-            val userId = principal?.getClaim("userId", String::class)
-            val username = principal?.getClaim("username", String::class)
-            val emailAddress = principal?.getClaim("email", String::class)
-
-            userId ?: return@get
-            username ?: return@get
-            emailAddress ?: return@get
-
-            if (userId.isEmpty() || username.isEmpty() || emailAddress.isEmpty()) {
-                call.respond(HttpStatusCode.Unauthorized, "Invalid token!")
-                return@get
-            }
-
-            call.respond(HttpStatusCode.OK, UserInfoResponse(userId, username, emailAddress))
-        }
-    }
-}

@@ -2,6 +2,7 @@ package com.example.plugins
 
 import com.example.data.source.UserDataSource
 import com.example.routes.authRoutes
+import com.example.routes.getUserInfo
 import com.example.routes.homeRoute
 import com.example.service.JwtTokenService
 import com.example.service.security.hashing.HashingService
@@ -18,6 +19,7 @@ fun Application.configureRouting(
     routing {
         authRoutes(userDataSource, hashingService, tokenService, tokenConfig)
         homeRoute()
+        getUserInfo()
     }
 }
 
