@@ -9,9 +9,9 @@ First of all, you need to register on [MongoDb](https://www.mongodb.com/cloud/at
 database.
 Then, you will need to define the following environment variables in your IDE:
 
-- dbName
-- JWT_SECRET
-- mongoPassword
+- `dbName` - The name of the database you created
+- `JWT_SECRET` - A secret key for JWT
+- `mongoPassword` - The password of the database
 
 After that, if you already created the account on MongoDb, you can use the already available option called "Connect" on
 that website and getting the connection string.
