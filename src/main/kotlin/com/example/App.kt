@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.data.MongoUserDataSource
+import com.example.data.source.MongoUserDataSource
 import com.example.plugins.configureMonitoring
 import com.example.plugins.configureRouting
 import com.example.plugins.configureSecurity
@@ -8,7 +8,7 @@ import com.example.plugins.configureSerialization
 import com.example.service.JwtTokenService
 import com.example.service.security.hashing.SHA256HashingService
 import com.example.service.security.token.TokenConfig
-import com.example.util.Constants
+import com.example.util.Const
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -23,7 +23,7 @@ fun Application.module() {
     val dbName = System.getenv("dbName")
 
     val db =
-        KMongo.createClient(connectionString = "your connection string here..")
+        KMongo.createClient("Your MongoDB connection string")
             .coroutine
             .getDatabase(dbName)
 
@@ -32,22 +32,21 @@ fun Application.module() {
 
     val issuer = environment.config.property("jwt.issuer").getString()
     val audience = environment.config.property("jwt.audience").getString()
-
-    val tokenConfig = TokenConfig(
-        issuer = issuer,
-        audience = audience,
-        expiresIn = Constants.expiresIn,
-        secret = System.getenv("JWT_SECRET")
-    )
+    val tokenConfig = tokenConfig(issuer, audience)
     val hashingService = SHA256HashingService()
 
     configureMonitoring()
     configureSerialization()
     configureSecurity(tokenConfig)
-    configureRouting(
-        userDataSource = userDataSource,
-        hashingService = hashingService,
-        tokenService = tokenService,
-        tokenConfig = tokenConfig
-    )
+    configureRouting(userDataSource, hashingService, tokenService, tokenConfig)
 }
+
+private fun tokenConfig(
+    issuer: String,
+    audience: String
+) = TokenConfig(
+    issuer = issuer,
+    audience = audience,
+    expiresIn = Const.expiresIn,
+    secret = System.getenv("JWT_SECRET")
+)
