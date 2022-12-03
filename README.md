@@ -29,3 +29,9 @@ After that, you can run the project or use the following command to watch the ch
 ```
 
 This will basically rebuild the project every time you change something on the code.
+
+### TODO
+
+- Fix the userInfo endpoint, and make it return the user info.
+- Add Logout feature.
+- Add tests.
